@@ -20,6 +20,10 @@ public class Autor extends AppCompatActivity {
 
     Calendar calendar;
     DatePickerDialog datePickerDialog;
+    String anoPublicacao ="";
+    String nomeFormatadoAutor1="";
+    String nomeFormatadoAutor2="";
+    String nomeFormatadoAutor3="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +33,9 @@ public class Autor extends AppCompatActivity {
 
         Intent i = getIntent();
 
-        final EditText nomeAutor = findViewById(R.id.editTextAutor1);
+        final EditText nomeAutor1 = findViewById(R.id.editTextAutor1);
+        final EditText nomeAutor2 = findViewById(R.id.editTextAutor2);
+        final EditText nomeAutor3 = findViewById(R.id.editTextAutor3);
         final EditText local = findViewById(R.id.editTextLocal);
         final TextView textViewData = findViewById(R.id.textViewData);
         final ImageButton imageButtonCalendar = findViewById(R.id.imageButtonCalendar);
@@ -58,6 +64,7 @@ public class Autor extends AppCompatActivity {
                     @Override
                     public void onDateSet(DatePicker datePicker, int mDay, int mMonth, int mYear) {
                         textViewData.setText(mYear + "/" + (mMonth+1)  + "/" + mDay);
+                        anoPublicacao = mYear + "/" + (mMonth+1)  + "/" + mDay;
                     }
                 }, year, month, day);
                 datePickerDialog.show();
@@ -68,12 +75,30 @@ public class Autor extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                final String autor = nomeAutor.getText().toString();
+                final String autor1 = nomeAutor1.getText().toString();
+                final String autor2 = nomeAutor2.getText().toString();
+                final String autor3 = nomeAutor3.getText().toString();
+
                 final String localPublicacao = local.getText().toString();
 
+                if (!autor1.equals("")){
+                    nomeFormatadoAutor1 = formatarAutor(autor1);
+                }
+
+                if (!autor2.equals("")){
+                    nomeFormatadoAutor2 = formatarAutor(autor2);
+                }
+
+                if (!autor3.equals("")){
+                    nomeFormatadoAutor3 = formatarAutor(autor3);
+                }
+
+
                 //Método responsável por criar a referência.
-                if (!autor.equals("")) {
-                    String resultado = makeReference(autor, titulo, subtitulo, tituloRevista, subTituloRevista, localPublicacao, volume, nEdicao, pagInicial, pagFinal);
+                if (!autor1.equals("")|| !autor2.equals("") || !autor3.equals("")) {
+
+
+                    String resultado = makeReference(nomeFormatadoAutor1, nomeFormatadoAutor2, nomeFormatadoAutor3, titulo, subtitulo, tituloRevista, subTituloRevista, localPublicacao, volume, nEdicao, pagInicial, pagFinal);
 
                     Intent i = new Intent(getApplicationContext(), Resultado.class);
                     i.putExtra("resultado", resultado);
@@ -87,10 +112,21 @@ public class Autor extends AppCompatActivity {
 
     }
 
-    public String makeReference(String autor, String titulo, String subTitulo, String tituloRevista, String subTituloRevista, String localPublicacao, String volume, String nEdicao, String pagInicial, String pagFinal) {
+    public String makeReference(String nomeFormatadoAutor1, String nomeFormatadoAutor2, String nomeFormatadoAutor3, String titulo, String subTitulo, String tituloRevista, String subTituloRevista, String localPublicacao, String volume, String nEdicao, String pagInicial, String pagFinal) {
 
+
+        String resultado = (!nomeFormatadoAutor1.equals("")?nomeFormatadoAutor1+"; ":"") + (!nomeFormatadoAutor2.equals("")?nomeFormatadoAutor2+"; ":"") + (!nomeFormatadoAutor3.equals("")?nomeFormatadoAutor3:"") + ". "+ titulo + subTitulo + ". " + tituloRevista + ": " + subTituloRevista + ", " + localPublicacao + ", " + volume + ", " + nEdicao + ", " + "p. " + pagInicial + "-" + pagFinal
+                + ", " + anoPublicacao + ".";
+
+        return resultado;
+
+
+    }
+
+    public String formatarAutor(String autor){
 
         String nomeFomatadoParcial = "";
+        String nomeFormatado = "";
 
         //Aqui coloca o último nome do Autor como o primeiro
         StringTokenizer st = new StringTokenizer(autor);
@@ -102,14 +138,9 @@ public class Autor extends AppCompatActivity {
         }
 
 
-        String nomeFormatado = st.nextToken().toUpperCase() + "," + nomeFomatadoParcial;
+        nomeFormatado = st.nextToken().toUpperCase() + "," + nomeFomatadoParcial;
 
-
-        String resultado = nomeFormatado + titulo + subTitulo + ". " + tituloRevista + ": " + subTituloRevista + ", " + localPublicacao + ", " + volume + ", " + nEdicao + ", " + "p. " + pagInicial + "-" + pagFinal
-                + "," + "dez/2019.";
-
-        return resultado;
-
+        return nomeFormatado;
 
     }
 }
